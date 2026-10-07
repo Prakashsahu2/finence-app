@@ -12,15 +12,15 @@ import { generateNotifications } from '../../../lib/notifications.js'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'finwise-secret-key-12345'
 
-const mongoDnsServers = (process.env.MONGO_DNS_SERVERS || '1.1.1.1,8.8.8.8')
-  .split(',')
-  .map((server) => server.trim())
-  .filter(Boolean)
-
-try {
-  dns.setServers(mongoDnsServers)
-} catch (error) {
-  console.error('[DNS] Invalid MONGO_DNS_SERVERS configuration:', error.message)
+if (process.env.MONGO_DNS_SERVERS) {
+  try {
+    const mongoDnsServers = process.env.MONGO_DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean)
+    if (mongoDnsServers.length) {
+      dns.setServers(mongoDnsServers)
+    }
+  } catch (error) {
+    console.error('[DNS] Invalid MONGO_DNS_SERVERS configuration:', error.message)
+  }
 }
 
 // Allow larger file uploads (PDFs/images) - Next.js default is ~1MB

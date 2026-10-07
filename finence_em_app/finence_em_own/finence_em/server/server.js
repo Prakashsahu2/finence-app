@@ -15,16 +15,16 @@ const __dirname = path.dirname(__filename)
 // Load environment variables from the parent root directory
 dotenv.config({ path: path.join(__dirname, '../.env') })
 
-const mongoDnsServers = (process.env.MONGO_DNS_SERVERS || '1.1.1.1,8.8.8.8')
-  .split(',')
-  .map((server) => server.trim())
-  .filter(Boolean)
-
-try {
-  dns.setServers(mongoDnsServers)
-  console.log(`[DNS] Using resolvers: ${mongoDnsServers.join(', ')}`)
-} catch (error) {
-  console.error('[DNS] Invalid MONGO_DNS_SERVERS configuration:', error.message)
+if (process.env.MONGO_DNS_SERVERS) {
+  try {
+    const mongoDnsServers = process.env.MONGO_DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean)
+    if (mongoDnsServers.length) {
+      dns.setServers(mongoDnsServers)
+      console.log(`[DNS] Using resolvers: ${mongoDnsServers.join(', ')}`)
+    }
+  } catch (error) {
+    console.error('[DNS] Invalid MONGO_DNS_SERVERS configuration:', error.message)
+  }
 }
 
 const app = express()

@@ -171,17 +171,19 @@ function getOfflineInsights(financeData) {
   return insights.slice(0, 4)
 }
 
-function getModel() {
-  if (!genAI) {
-    const key = process.env.GEMINI_API_KEY?.trim()
-    if (key && !/^your_|^replace_/i.test(key)) {
-      genAI = new GoogleGenerativeAI(key)
-    }
+function getModel(systemInstruction) {
+  const key = process.env.GEMINI_API_KEY?.trim()
+  if (!key || /^your_|^replace_/i.test(key)) {
+    return null
   }
-  if (!genAI) return null
-  return genAI.getGenerativeModel({
-    model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-  })
+  const client = new GoogleGenerativeAI(key)
+  const options = {
+    model: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+  }
+  if (systemInstruction) {
+    options.systemInstruction = systemInstruction
+  }
+  return client.getGenerativeModel(options)
 }
 
 const CATEGORIES = [
@@ -286,65 +288,73 @@ export async function generateAiInsights(financeData) {
  * 3. Conversational Finance Assistant
  */
 export async function chatFinance(message, history, financeData) {
-  const model = getModel()
-  if (!model) {
+  const key = process.env.GEMINI_API_KEY?.trim()
+  if (!key || /^your_|^replace_/i.test(key)) {
     return 'The AI Assistant is currently running in offline mode because the GEMINI_API_KEY is not set. Please ask your administrator to configure it.'
   }
 
-  try {
-    const systemPrompt = `You are FinWise AI, a friendly and expert conversational finance assistant. You have access to the user's financial data:
-    - Current Balance: ₹${financeData.summary.currentBalance}
-    - Total Income: ₹${financeData.summary.totalIncome}
-    - Total Expenses: ₹${financeData.summary.totalExpense}
-    - Savings: ₹${financeData.summary.savings} (Savings Rate: ${financeData.summary.savingsRate}%)
-    - Budget Details: ${JSON.stringify(financeData.budgetAnalysis)}
-    - Active Subscriptions: ${JSON.stringify(financeData.detection.recurringSubscriptions)}
-    - Top Expenses Category: ${financeData.spending.highestCategory ? `${financeData.spending.highestCategory.category} (₹${financeData.spending.highestCategory.amount})` : 'None'}
-    - Recent 10 Transactions: ${JSON.stringify(financeData.recentTransactions || [])}
+  const systemPrompt = `You are FinWise AI, a friendly and expert conversational finance assistant. You have access to the user's financial data:
+  - Current Balance: ₹${financeData.summary.currentBalance}
+  - Total Income: ₹${financeData.summary.totalIncome}
+  - Total Expenses: ₹${financeData.summary.totalExpense}
+  - Savings: ₹${financeData.summary.savings} (Savings Rate: ${financeData.summary.savingsRate}%)
+  - Budget Details: ${JSON.stringify(financeData.budgetAnalysis)}
+  - Active Subscriptions: ${JSON.stringify(financeData.detection.recurringSubscriptions)}
+  - Top Expenses Category: ${financeData.spending.highestCategory ? `${financeData.spending.highestCategory.category} (₹${financeData.spending.highestCategory.amount})` : 'None'}
+  - Recent 10 Transactions: ${JSON.stringify(financeData.recentTransactions || [])}
 
-    Instructions:
-    1. Answer user queries contextually and professionally.
-    2. Format using markdown tables, bullet points, and clean typography.
-    3. Be encouraging, but point out financial risks (like low savings rate or overspending on categories).
-    4. Speak in terms of Indian Rupees (₹).
-    `
+  Instructions:
+  1. Answer user queries contextually and professionally.
+  2. Format using markdown tables, bullet points, and clean typography.
+  3. Be encouraging, but point out financial risks (like low savings rate or overspending on categories).
+  4. Speak in terms of Indian Rupees (₹).
+  `
 
-    // Filter history so that the first message starts with the 'user' role
-    const formattedHistory = []
-    let foundFirstUser = false
-    for (const h of history) {
-      if (h.role === 'user') {
-        foundFirstUser = true
-      }
-      if (foundFirstUser) {
-        formattedHistory.push({
-          role: h.role === 'user' ? 'user' : 'model',
-          parts: [{ text: h.text }]
-        })
-      }
+  // Filter history so that the first message starts with the 'user' role
+  const formattedHistory = []
+  let foundFirstUser = false
+  for (const h of history) {
+    if (h.role === 'user') {
+      foundFirstUser = true
     }
-
-    const chatSession = model.startChat({
-      history: formattedHistory,
-      systemInstruction: {
-        parts: [{ text: systemPrompt }]
-      }
-    })
-
-    const result = await chatSession.sendMessage(message)
-    return result.response.text()
-  } catch (err) {
-    const errorMessage = String(err?.message || '')
-    const invalidKey = err?.status === 400 && /api[_ -]?key|invalid/i.test(errorMessage)
-    if (isRateLimitError(err)) {
-      console.warn('[Gemini Chat] Gemini is temporarily unavailable; using offline finance response.')
-    } else {
-      console.error(
-        `[Gemini Chat error] ${invalidKey ? 'Invalid GEMINI_API_KEY.' : errorMessage || 'Unknown Gemini error.'}`,
-      )
+    if (foundFirstUser) {
+      formattedHistory.push({
+        role: h.role === 'user' ? 'user' : 'model',
+        parts: [{ text: h.text }]
+      })
     }
-    return getOfflineChatReply(message, financeData)
   }
+
+  const candidateModels = [
+    process.env.GEMINI_MODEL,
+    'gemini-flash-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash',
+  ].filter(Boolean)
+  const uniqueModels = [...new Set(candidateModels)]
+
+  const client = new GoogleGenerativeAI(key)
+  let lastError = null
+
+  for (const modelName of uniqueModels) {
+    try {
+      const model = client.getGenerativeModel({
+        model: modelName,
+        systemInstruction: systemPrompt,
+      })
+      const chatSession = model.startChat({
+        history: formattedHistory,
+      })
+      const result = await chatSession.sendMessage(message)
+      return result.response.text()
+    } catch (err) {
+      lastError = err
+      console.warn(`[Gemini Chat] Model ${modelName} failed (${err?.status || err?.message}). Trying next fallback...`)
+    }
+  }
+
+  console.error('[Gemini Chat error - all models failed]:', lastError?.message || lastError)
+  return getOfflineChatReply(message, financeData)
 }
 
 /**

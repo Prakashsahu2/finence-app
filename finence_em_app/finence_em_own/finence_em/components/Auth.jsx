@@ -20,6 +20,7 @@ import { toast } from 'sonner'
 
 export default function Auth({ onLoginSuccess }) {
   // ── Password visibility ──────────────────────────────────────────────
+  const [mobileAuthTab, setMobileAuthTab] = useState('login')
   const [showLoginPassword, setShowLoginPassword] = useState(false)
   const [showRegPassword, setShowRegPassword] = useState(false)
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false)
@@ -93,15 +94,17 @@ export default function Auth({ onLoginSuccess }) {
   }
 
   const handleScrollToRegister = (e) => {
-    e.preventDefault()
+    e?.preventDefault()
+    setMobileAuthTab('register')
     document.getElementById('register-section')?.scrollIntoView({ behavior: 'smooth' })
-    setTimeout(() => regNameRef.current?.focus(), 500)
+    setTimeout(() => regNameRef.current?.focus(), 300)
   }
 
   const handleScrollToLogin = (e) => {
-    e.preventDefault()
+    e?.preventDefault()
+    setMobileAuthTab('login')
     document.getElementById('login-section')?.scrollIntoView({ behavior: 'smooth' })
-    setTimeout(() => loginEmailRef.current?.focus(), 500)
+    setTimeout(() => loginEmailRef.current?.focus(), 300)
   }
 
   const handleForgotPassword = async (e) => {
@@ -350,16 +353,34 @@ export default function Auth({ onLoginSuccess }) {
 
   // ─────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-indigo-50/50 to-purple-50/50 p-4 sm:p-6 md:p-10">
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 hover:shadow-purple-100/50 grid grid-cols-1 md:grid-cols-2">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-indigo-50/50 to-purple-50/50 p-3 sm:p-6 md:p-10">
+      <div className="w-full max-w-5xl overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-2xl transition-all duration-300 grid grid-cols-1 md:grid-cols-2">
 
         {/* ══════════════════════════════════════════════════════════════
             LEFT COLUMN — LOGIN (Dark Purple)
         ══════════════════════════════════════════════════════════════ */}
         <div
           id="login-section"
-          className="relative flex flex-col justify-between bg-gradient-to-br from-[#5A4EAB] to-[#403590] p-8 text-white sm:p-12 md:p-16 transition-all duration-500"
+          className={`relative flex flex-col justify-between bg-gradient-to-br from-[#5A4EAB] to-[#403590] p-6 sm:p-10 md:p-14 text-white transition-all duration-500 ${mobileAuthTab === 'register' ? 'hidden md:flex' : 'flex'}`}
         >
+          {/* Mobile Switcher (Visible on small screens) */}
+          <div className="md:hidden flex p-1 mb-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+            <button
+              type="button"
+              onClick={() => setMobileAuthTab('login')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mobileAuthTab === 'login' ? 'bg-white text-[#5A4EAB] shadow-md' : 'text-purple-100 hover:text-white'}`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileAuthTab('register')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mobileAuthTab === 'register' ? 'bg-white text-[#5A4EAB] shadow-md' : 'text-purple-100 hover:text-white'}`}
+            >
+              Create Account
+            </button>
+          </div>
+
           {/* Logo & Header */}
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white shadow-inner">
@@ -525,8 +546,26 @@ export default function Auth({ onLoginSuccess }) {
         ══════════════════════════════════════════════════════════════ */}
         <div
           id="register-section"
-          className="flex flex-col justify-between bg-slate-50/50 p-8 text-slate-800 sm:p-12 md:p-16 transition-all duration-500"
+          className={`flex flex-col justify-between bg-slate-50/50 p-6 sm:p-10 md:p-14 text-slate-800 transition-all duration-500 ${mobileAuthTab === 'login' ? 'hidden md:flex' : 'flex'}`}
         >
+          {/* Mobile Switcher (Visible on small screens) */}
+          <div className="md:hidden flex p-1 mb-6 rounded-xl bg-slate-200/80 border border-slate-300">
+            <button
+              type="button"
+              onClick={() => setMobileAuthTab('login')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mobileAuthTab === 'login' ? 'bg-[#5A4EAB] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileAuthTab('register')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mobileAuthTab === 'register' ? 'bg-[#5A4EAB] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Create Account
+            </button>
+          </div>
+
           <div className="hidden md:block" />
 
           <div className="my-10 md:my-0">

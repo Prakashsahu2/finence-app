@@ -32,6 +32,14 @@ import {
   Wallet,
   Waves,
   Zap,
+  Home as HomeIcon,
+  BarChart3,
+  AlertOctagon,
+  Repeat,
+  Activity,
+  Target,
+  Globe,
+  MessageSquare,
 } from 'lucide-react'
 import {
   Area,
@@ -62,16 +70,43 @@ const CATEGORY_COLOR_MAP = [
   '#818cf8', '#38bdf8', '#14b8a6', '#22c55e', '#eab308', '#f97316', '#fb7185', '#a855f7', '#06b6d4', '#60a5fa', '#c084fc', '#94a3b8',
 ]
 
+const ALL_FEATURES_LIST = [
+  { id: 'home', label: 'Home', desc: 'Financial Cockpit', icon: HomeIcon, tab: 'home', badge: 'Active', tone: 'indigo' },
+  { id: 'overview', label: 'Overview', desc: 'Trends & Analytics', icon: BarChart3, tab: 'overview', badge: 'Charts', tone: 'sky' },
+  { id: 'transactions', label: 'Transactions', desc: 'Ledger & Entries', icon: CreditCard, tab: 'transactions', badge: 'Ledger', tone: 'emerald' },
+  { id: 'budget', label: 'Budget', desc: 'Category Caps', icon: PiggyBank, tab: 'budget', badge: 'Limits', tone: 'amber' },
+  { id: 'detection', label: 'Detection', desc: 'Anomaly & Leaks', icon: AlertOctagon, tab: 'detection', badge: 'Security', tone: 'rose' },
+  { id: 'predictions', label: 'Predictions', desc: 'Cashflow Forecast', icon: TrendingUp, tab: 'predictions', badge: 'AI Forecast', tone: 'blue' },
+  { id: 'subscriptions', label: 'Subscriptions', desc: 'Recurring Bills', icon: Repeat, tab: 'subscriptions', badge: 'Auto-Pay', tone: 'purple' },
+  { id: 'reports', label: 'Reports', desc: 'PDF & Statements', icon: Activity, tab: 'reports', badge: 'Export', tone: 'teal' },
+  { id: 'affordability', label: 'Affordability', desc: 'Purchase Simulator', icon: Target, tab: 'affordability', badge: 'AI Check', tone: 'violet' },
+  { id: 'debt-payoff', label: 'Debt Payoff', desc: 'Snowball / Avalanche', icon: Zap, tab: 'debt-payoff', badge: 'Payoff', tone: 'orange' },
+  { id: 'tax-planning', label: 'Tax Planning', desc: '80C & Regime Calc', icon: Calculator, tab: 'tax-planning', badge: 'Tax AI', tone: 'cyan' },
+  { id: 'news-market', label: 'News & Markets', desc: 'Live Market Trends', icon: Globe, tab: 'news-market', badge: 'Live', tone: 'emerald' },
+  { id: 'simulator', label: 'Life Simulator', desc: 'What-If Scenarios', icon: Brain, tab: 'simulator', badge: 'Simulation', tone: 'fuchsia' },
+  { id: 'assistant', label: 'AI Chat', desc: '24/7 Copilot', icon: MessageSquare, tab: 'assistant', badge: 'Copilot', tone: 'indigo' },
+  { id: 'advice', label: 'Advice', desc: 'Action Recommendations', icon: Lightbulb, tab: 'advice', badge: 'Insights', tone: 'amber' },
+  { id: 'receipt-scan', label: 'AI Receipt Scan', desc: 'Smart OCR Extractor', icon: Receipt, isReceiptScan: true, badge: 'Smart OCR', tone: 'purple' },
+]
+
 const NAV_ACTIONS = [
+  { label: 'Home Dashboard', tab: 'home' },
+  { label: 'Overview Analytics', tab: 'overview' },
   { label: 'Add expense', tab: 'transactions', action: 'expense' },
   { label: 'Add income', tab: 'transactions', action: 'income' },
   { label: 'Open budget', tab: 'budget' },
-  { label: 'Check subscriptions', tab: 'subscriptions' },
-  { label: 'Run life simulator', tab: 'simulator' },
-  { label: 'Ask AI', tab: 'assistant' },
+  { label: 'Check detection & anomalies', tab: 'detection' },
   { label: 'View predictions', tab: 'predictions' },
-  { label: 'View transactions', tab: 'transactions' },
+  { label: 'Check subscriptions', tab: 'subscriptions' },
+  { label: 'View reports', tab: 'reports' },
   { label: 'Open affordability', tab: 'affordability' },
+  { label: 'Debt payoff calculator', tab: 'debt-payoff' },
+  { label: 'Tax planning & 80C', tab: 'tax-planning' },
+  { label: 'News & market pulse', tab: 'news-market' },
+  { label: 'Run life simulator', tab: 'simulator' },
+  { label: 'Ask AI Chat', tab: 'assistant' },
+  { label: 'Financial advice', tab: 'advice' },
+  { label: 'Scan Receipt', tab: 'home', isReceiptScan: true },
 ]
 
 function inr(value) {
@@ -705,75 +740,123 @@ export default function HomeDashboard({
   const selectedCategoryItems = selectedCategory ? categories.find((item) => item.category === selectedCategory)?.items || [] : []
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-[#070B17] text-slate-100 shadow-2xl ring-1 ring-white/10">
+    <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-[#070B17] text-slate-100 shadow-2xl ring-1 ring-white/10">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(56,189,248,0.16),_transparent_26%),linear-gradient(180deg,_rgba(7,11,23,1)_0%,_rgba(7,11,23,0.98)_100%)]" />
       <div className="absolute inset-0 opacity-40 pointer-events-none bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
-      <div className="relative z-10 p-4 sm:p-5 lg:p-6 space-y-5">
+      <div className="relative z-10 p-3.5 sm:p-5 lg:p-6 space-y-4 sm:space-y-5">
         {/* Hero Section */}
-        <div className="flex flex-col gap-4 rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl lg:p-7">
+        <div className="flex flex-col gap-4 rounded-2xl sm:rounded-[1.75rem] border border-white/10 bg-white/5 p-4 sm:p-5 lg:p-7 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-            <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.08)]">
+            <div className="max-w-3xl space-y-3 sm:space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.08)]">
                 <Sparkles className="h-3.5 w-3.5" /> FinWise Command Center
               </div>
               <div>
-                <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+                <h1 className="text-2xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
                   Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user?.name || 'there'} 👋
                 </h1>
-                <p className="mt-2 text-sm text-slate-300 sm:text-base">Here is your financial situation today.</p>
+                <p className="mt-1.5 text-xs sm:text-base text-slate-300">Here is your financial situation today.</p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge className={`border-0 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] ${financialStatus === 'STRONG' ? 'bg-emerald-500/15 text-emerald-200' : financialStatus === 'STABLE' ? 'bg-sky-500/15 text-sky-200' : 'bg-amber-500/15 text-amber-200'}`}>
-                  Financial Status: {financialStatus}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <Badge className={`border-0 px-2.5 py-1 text-[11px] sm:text-xs font-semibold tracking-[0.16em] ${financialStatus === 'STRONG' ? 'bg-emerald-500/15 text-emerald-200' : financialStatus === 'STABLE' ? 'bg-sky-500/15 text-sky-200' : 'bg-amber-500/15 text-amber-200'}`}>
+                  Status: {financialStatus}
                 </Badge>
-                <p className="max-w-2xl text-sm leading-relaxed text-slate-300">
+                <p className="max-w-2xl text-xs sm:text-sm leading-relaxed text-slate-300">
                   {defaultHero}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-3 pt-2">
-                <Button onClick={() => setActiveTab('assistant')} className="rounded-full bg-gradient-to-r from-fuchsia-600/40 to-indigo-600/40 border-white/10 text-white hover:bg-fuchsia-600/50">
-                  <Brain className="mr-2 h-4 w-4" /> Ask FinWise AI
+              <div className="flex flex-wrap gap-2 sm:gap-3 pt-1 sm:pt-2">
+                <Button size="sm" onClick={() => setActiveTab('assistant')} className="rounded-full bg-gradient-to-r from-fuchsia-600/40 to-indigo-600/40 border-white/10 text-white hover:bg-fuchsia-600/50 text-xs">
+                  <Brain className="mr-1.5 sm:mr-2 h-3.5 w-3.5" /> Ask FinWise AI
                 </Button>
-                <Button onClick={() => handleScenarioOpen(currentSimulatorScenario)} className="rounded-full bg-gradient-to-r from-cyan-600/40 to-blue-600/40 border-white/10 text-white hover:bg-cyan-600/50">
-                  <Calculator className="mr-2 h-4 w-4" /> Simulate a Decision
+                <Button size="sm" onClick={() => handleScenarioOpen(currentSimulatorScenario)} className="rounded-full bg-gradient-to-r from-cyan-600/40 to-blue-600/40 border-white/10 text-white hover:bg-cyan-600/50 text-xs">
+                  <Calculator className="mr-1.5 sm:mr-2 h-3.5 w-3.5" /> Simulate Decision
                 </Button>
-                <Button onClick={() => setQuickAddOpen(true)} className="rounded-full bg-white/10 border-white/10 text-white hover:bg-white/15">
-                  <Plus className="mr-2 h-4 w-4" /> Quick Add
+                <Button size="sm" onClick={() => setQuickAddOpen(true)} className="rounded-full bg-white/10 border-white/10 text-white hover:bg-white/15 text-xs">
+                  <Plus className="mr-1.5 sm:mr-2 h-3.5 w-3.5" /> Quick Add
                 </Button>
                 {onOpenReceiptScanner && (
-                  <Button onClick={onOpenReceiptScanner} className="rounded-full bg-gradient-to-r from-purple-600/40 to-fuchsia-600/40 border-white/10 text-white hover:bg-purple-600/50">
-                    <Receipt className="mr-2 h-4 w-4" /> Scan Receipt 📸
+                  <Button size="sm" onClick={onOpenReceiptScanner} className="rounded-full bg-gradient-to-r from-purple-600/40 to-fuchsia-600/40 border-white/10 text-white hover:bg-purple-600/50 text-xs">
+                    <Receipt className="mr-1.5 sm:mr-2 h-3.5 w-3.5" /> Scan Receipt 📸
                   </Button>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 xl:min-w-[360px]">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 xl:min-w-[360px]">
               <Card className="border border-white/10 bg-white/6 shadow-lg backdrop-blur-xl">
-                <CardContent className="p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Current Balance</div>
-                  <div className="mt-2 text-2xl font-black text-white">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Current Balance</div>
+                  <div className="mt-1.5 text-xl sm:text-2xl font-black text-white">
                     <AnimatedCounter value={summary.currentBalance || 0} prefix="₹" />
                   </div>
-                  <div className={`mt-2 text-xs ${summaryComparisons.savingsChange >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                    {summaryComparisons.savingsChange >= 0 ? '↑' : '↓'} {Math.abs(round(summaryComparisons.savingsChange, 1))}% vs previous period
+                  <div className={`mt-1.5 text-[11px] sm:text-xs ${summaryComparisons.savingsChange >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    {summaryComparisons.savingsChange >= 0 ? '↑' : '↓'} {Math.abs(round(summaryComparisons.savingsChange, 1))}% vs prev
                   </div>
                 </CardContent>
               </Card>
               <Card className="border border-white/10 bg-white/6 shadow-lg backdrop-blur-xl">
-                <CardContent className="p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Savings Rate</div>
-                  <div className="mt-2 text-2xl font-black text-white"><AnimatedCounter value={summary.savingsRate || 0} suffix="%" decimals={1} /></div>
-                  <div className="mt-2 text-xs text-slate-300">Target: 20%+</div>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Savings Rate</div>
+                  <div className="mt-1.5 text-xl sm:text-2xl font-black text-white"><AnimatedCounter value={summary.savingsRate || 0} suffix="%" decimals={1} /></div>
+                  <div className="mt-1.5 text-[11px] sm:text-xs text-slate-300">Target: 20%+</div>
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
 
-        {/* Financial Command Center - Summary Cards */}
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
+        {/* FinWise 16-Feature Ecosystem Row Bar */}
+        <div className="rounded-2xl sm:rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3.5 sm:p-4 shadow-xl backdrop-blur-xl">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between pb-2.5 border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-cyan-400" />
+              <span className="text-xs font-bold tracking-wide text-white uppercase tracking-[0.18em]">
+                All Features Row Bar (16 Modules)
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-400">Swipe & click any module to navigate</span>
+          </div>
+          
+          <div className="mt-3 flex flex-row items-stretch gap-2.5 overflow-x-auto no-scrollbar pb-1">
+            {ALL_FEATURES_LIST.map((feat) => {
+              const Icon = feat.icon
+              return (
+                <button
+                  key={feat.id}
+                  onClick={() => {
+                    if (feat.isReceiptScan) {
+                      if (onOpenReceiptScanner) onOpenReceiptScanner()
+                    } else if (feat.tab) {
+                      openTab(feat.tab)
+                    }
+                  }}
+                  className="group flex min-w-[140px] sm:min-w-[150px] max-w-[170px] shrink-0 flex-col justify-between rounded-xl border border-white/10 bg-white/[0.05] p-3 text-left transition-all duration-200 hover:-translate-y-1 hover:border-cyan-500/40 hover:bg-white/[0.1] hover:shadow-lg hover:shadow-cyan-500/10 active:scale-95"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-cyan-300 transition-colors group-hover:bg-cyan-500 group-hover:text-black">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <Badge className="border-0 bg-white/10 px-1.5 py-0 text-[9px] font-medium text-slate-300 group-hover:bg-cyan-500/20 group-hover:text-cyan-200">
+                      {feat.badge}
+                    </Badge>
+                  </div>
+                  <div className="mt-2.5">
+                    <div className="text-xs font-bold text-white transition-colors group-hover:text-cyan-200">
+                      {feat.label}
+                    </div>
+                    <div className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                      {feat.desc}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4">
           {[
             { label: 'Total Income', value: summary.totalIncome || 0, change: summaryComparisons.incomeChange, icon: TrendingUp, tone: 'emerald' },
             { label: 'Total Expense', value: summary.totalExpense || 0, change: summaryComparisons.expenseChange, icon: TrendingDown, tone: 'rose' },

@@ -16,7 +16,8 @@ import {
   Wallet, TrendingUp, TrendingDown, PiggyBank, Sparkles, Trash2, PlusCircle, Database,
   AlertTriangle, ShieldCheck, PieChart as PieIcon, Activity, Target, Brain, RefreshCcw,
   Repeat, AlertOctagon, Zap, Lightbulb, LogOut, MessageSquare, Clock, HelpCircle,
-  CheckCircle, UploadCloud, ChevronRight, Sparkle, Palette
+  CheckCircle, UploadCloud, ChevronRight, Sparkle, Palette, Home, BarChart3, CreditCard,
+  Receipt, Globe, Calculator, Menu, X, SlidersHorizontal, User as UserIcon
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import {
@@ -35,6 +36,25 @@ import NewsAndMarketDashboard from '@/components/NewsAndMarket/NewsAndMarketDash
 
 const CATEGORIES = ['Salary', 'Business', 'Investment', 'Food', 'Shopping', 'Transport', 'Rent', 'Utilities', 'Entertainment', 'Health', 'Education', 'Loan/EMI', 'Other']
 const PIE_COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#0ea5e9', '#3b82f6', '#a855f7', '#64748b']
+
+const MOBILE_MODULES = [
+  { id: 'home', label: 'Home Cockpit', desc: 'Financial Cockpit & Health', icon: Home, tab: 'home', tone: 'indigo' },
+  { id: 'overview', label: 'Overview', desc: 'Trends & Analytics Charts', icon: BarChart3, tab: 'overview', tone: 'sky' },
+  { id: 'transactions', label: 'Transactions', desc: 'Ledger & Quick Add', icon: CreditCard, tab: 'transactions', tone: 'emerald' },
+  { id: 'budget', label: 'Budget', desc: 'Category Limits & Alerts', icon: PiggyBank, tab: 'budget', tone: 'amber' },
+  { id: 'detection', label: 'Detection', desc: 'Anomaly & Money Leaks', icon: AlertOctagon, tab: 'detection', tone: 'rose' },
+  { id: 'predictions', label: 'Predictions', desc: 'AI Cashflow Forecast', icon: TrendingUp, tab: 'predictions', tone: 'blue' },
+  { id: 'subscriptions', label: 'Subscriptions', desc: 'Recurring Bills & Subs', icon: Repeat, tab: 'subscriptions', tone: 'purple' },
+  { id: 'reports', label: 'Reports', desc: 'Export PDF & Statements', icon: Activity, tab: 'reports', tone: 'teal' },
+  { id: 'affordability', label: 'Affordability', desc: 'Purchase AI Simulator', icon: Target, tab: 'affordability', tone: 'violet' },
+  { id: 'debt-payoff', label: 'Debt Payoff', desc: 'Snowball & Avalanche Plan', icon: Zap, tab: 'debt-payoff', tone: 'orange' },
+  { id: 'tax-planning', label: 'Tax Planning', desc: '80C & Regime Calculator', icon: Calculator, tab: 'tax-planning', tone: 'cyan' },
+  { id: 'news-market', label: 'News & Markets', desc: 'Live Market Trends & News', icon: Globe, tab: 'news-market', tone: 'emerald' },
+  { id: 'simulator', label: 'Life Simulator', desc: 'What-If Life Events', icon: Brain, tab: 'simulator', tone: 'fuchsia' },
+  { id: 'assistant', label: 'AI Chat', desc: '24/7 Financial Copilot', icon: MessageSquare, tab: 'assistant', tone: 'indigo' },
+  { id: 'advice', label: 'Advice', desc: 'Tailored Smart Insights', icon: Lightbulb, tab: 'advice', tone: 'amber' },
+  { id: 'receipt-scan', label: 'AI Receipt Scan', desc: 'Smart OCR Extractor', icon: Receipt, isReceiptScan: true, tone: 'purple' },
+]
 
 function inr(n) {
   if (n === undefined || n === null || isNaN(n)) return '\u20B90'
@@ -216,6 +236,8 @@ export default function App() {
   // Home dashboard navigation state
   const [activeTab, setActiveTab] = useState('home')
   const [simulatorScenario, setSimulatorScenario] = useState('bike')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [moreModulesOpen, setMoreModulesOpen] = useState(false)
 
   async function loadAll() {
     try {
@@ -662,23 +684,24 @@ function handleReceiptFileChange(e) {
 
       {/* Header */}
       <header className={`sticky top-0 z-30 border-b ${currentTheme.header}`}>
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <div className="container mx-auto flex h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white shadow-lg shadow-indigo-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white shadow-lg shadow-indigo-500/20 shrink-0">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-lg font-bold tracking-tight flex items-center gap-2 text-white">
+              <div className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-1.5 sm:gap-2 text-white">
                 FinWise
-                <Badge className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30 text-[10px] py-0 px-2 font-mono">
+                <Badge className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30 text-[9px] sm:text-[10px] py-0 px-1.5 font-mono">
                   AI PRO
                 </Badge>
               </div>
-              <div className="text-xs text-slate-400 -mt-0.5">Smart Personal Finance</div>
+              <div className="text-[11px] text-slate-400 -mt-0.5 hidden xs:block sm:block">Smart Personal Finance</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Desktop Toolbar */}
+          <div className="hidden lg:flex items-center gap-2">
             {/* Theme Selector Dropdown */}
             <Select value={bgTheme} onValueChange={changeTheme}>
               <SelectTrigger className="w-[145px] h-8 text-xs font-semibold bg-indigo-500/10 border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20 transition-colors">
@@ -700,7 +723,7 @@ function handleReceiptFileChange(e) {
               </SelectContent>
             </Select>
 
-            <div className="mr-2 hidden items-center gap-2 sm:flex">
+            <div className="mr-2 hidden items-center gap-2 xl:flex">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/20 text-xs font-bold text-indigo-300 border border-indigo-500/30">
                 {user.name ? user.name[0].toUpperCase() : 'U'}
               </div>
@@ -727,17 +750,132 @@ function handleReceiptFileChange(e) {
               <LogOut className="h-4 w-4 sm:mr-1.5" /> <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
+
+          {/* Mobile Header Actions */}
+          <div className="flex lg:hidden items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAiWelcomePopup(true)}
+              className="h-8 px-2.5 bg-purple-500/15 text-purple-300 border-purple-500/30 text-xs font-semibold"
+            >
+              <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-400 animate-pulse" /> AI
+            </Button>
+            <NotificationsBell />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileMenuOpen(true)}
+              className="h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-800/80 rounded-xl"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-6">
+      {/* Mobile Menu Drawer / Dialog */}
+      <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-sm rounded-3xl p-5 shadow-2xl">
+          <DialogHeader className="pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-base">
+                {user.name ? user.name[0].toUpperCase() : 'U'}
+              </div>
+              <div className="text-left">
+                <DialogTitle className="text-base font-bold text-white">{user.name}</DialogTitle>
+                <DialogDescription className="text-xs text-slate-400">{user.email}</DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Theme Selector in Mobile Menu */}
+            <div>
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+                Color Theme
+              </label>
+              <Select value={bgTheme} onValueChange={(val) => { changeTheme(val); setMobileMenuOpen(false); }}>
+                <SelectTrigger className="w-full h-10 text-xs font-medium bg-slate-800/90 border-slate-700 text-slate-200">
+                  <Palette className="h-4 w-4 mr-2 text-indigo-400" />
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-slate-800 text-slate-200 max-h-60">
+                  <SelectItem value="aurora">✨ Midnight Aurora</SelectItem>
+                  <SelectItem value="cyber">❇️ Cyber Emerald</SelectItem>
+                  <SelectItem value="cosmic">🌌 Cosmic Royal</SelectItem>
+                  <SelectItem value="sunset">🌅 Sunset Gold</SelectItem>
+                  <SelectItem value="pearl">🌸 Pearl Lavender</SelectItem>
+                  <SelectItem value="volt">⚡ Volt Neon</SelectItem>
+                  <SelectItem value="ocean">🌊 Ocean Depths</SelectItem>
+                  <SelectItem value="rose">🥀 Rose Noir</SelectItem>
+                  <SelectItem value="arctic">🧊 Arctic Frost</SelectItem>
+                  <SelectItem value="jungle">🌿 Jungle Noir</SelectItem>
+                  <SelectItem value="nebula">🔮 Nebula Violet</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="space-y-2 pt-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                Actions
+              </label>
+              <Button
+                onClick={() => { runAnalysis(); setMobileMenuOpen(false); }}
+                disabled={loading}
+                className="w-full justify-start h-10 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl shadow-md text-xs font-semibold"
+              >
+                <RefreshCcw className={`h-4 w-4 mr-2.5 ${loading ? 'animate-spin' : ''}`} /> Run Financial Analysis
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { setShowReceiptScanner(true); setMobileMenuOpen(false); }}
+                className="w-full justify-start h-10 bg-cyan-950/40 border-cyan-800/50 text-cyan-300 hover:bg-cyan-900/50 rounded-xl text-xs font-semibold"
+              >
+                <Receipt className="h-4 w-4 mr-2.5 text-cyan-400" /> Scan Receipt OCR
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { seedData(); setMobileMenuOpen(false); }}
+                disabled={loading}
+                className="w-full justify-start h-10 bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-800 rounded-xl text-xs font-semibold"
+              >
+                <Database className="h-4 w-4 mr-2.5 text-slate-400" /> Load Demo Data
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { clearAll(); setMobileMenuOpen(false); }}
+                className="w-full justify-start h-10 bg-slate-800/80 border-slate-700 text-rose-300 hover:bg-rose-950/40 hover:border-rose-900 rounded-xl text-xs font-semibold"
+              >
+                <Trash2 className="h-4 w-4 mr-2.5 text-rose-400" /> Clear All Data
+              </Button>
+            </div>
+
+            {/* Logout button */}
+            <div className="pt-2 border-t border-slate-800">
+              <Button
+                variant="ghost"
+                onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                className="w-full justify-start h-10 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl text-xs font-semibold"
+              >
+                <LogOut className="h-4 w-4 mr-2.5" /> Sign Out
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-24 md:pb-8">
         {/* Top Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
           <StatCard title="Total Income" value={inr(summary?.totalIncome || 0)} icon={TrendingUp} tone="emerald" onClick={() => setDetailStat('income')} />
           <StatCard title="Total Expense" value={inr(summary?.totalExpense || 0)} icon={TrendingDown} tone="rose" onClick={() => setDetailStat('expense')} />
           <StatCard title="Current Balance" value={inr(summary?.currentBalance || 0)} icon={Wallet} tone="indigo" onClick={() => setDetailStat('balance')} />
           <StatCard title="Savings" value={inr(summary?.savings || 0)} icon={PiggyBank} tone="purple" onClick={() => setDetailStat('savings')} />
-          <StatCard title="Savings Rate" value={`${summary?.savingsRate ?? 0}%`} icon={Activity} tone="amber" onClick={() => setDetailStat('savingsRate')} />
+          <div className="col-span-2 sm:col-span-1 md:col-span-1">
+            <StatCard title="Savings Rate" value={`${summary?.savingsRate ?? 0}%`} icon={Activity} tone="amber" onClick={() => setDetailStat('savingsRate')} />
+          </div>
         </div>
 
         {/* Health + Insights */}
@@ -839,29 +977,69 @@ function handleReceiptFileChange(e) {
           </Card>
         </div>
 
-<Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full items-start gap-4">
-          <TabsList className="sticky top-4 flex h-auto w-56 shrink-0 flex-col items-stretch justify-start gap-1 rounded-xl bg-slate-100 p-2">
-            <TabsTrigger value="home" className="justify-start">Home</TabsTrigger>
-            <TabsTrigger value="overview" className="justify-start">Overview</TabsTrigger>
-            <TabsTrigger value="transactions" className="justify-start">Transactions</TabsTrigger>
-            <TabsTrigger value="budget" className="justify-start">Budget</TabsTrigger>
-            <TabsTrigger value="detection" className="justify-start">Detection</TabsTrigger>
-            <TabsTrigger value="predictions" className="justify-start">Predictions</TabsTrigger>
-            <TabsTrigger value="subscriptions" className="justify-start">Subscriptions</TabsTrigger>
-            <TabsTrigger value="reports" className="justify-start">Reports</TabsTrigger>
-            <TabsTrigger value="affordability" className="justify-start">Affordability</TabsTrigger>
-            <TabsTrigger value="debt-payoff" className="justify-start">Debt Payoff</TabsTrigger>
-            <TabsTrigger value="tax-planning" className="justify-start">Tax Planning</TabsTrigger>
-            <TabsTrigger value="news-market" className="justify-start">News & Markets</TabsTrigger>
-            <TabsTrigger value="simulator" className="justify-start">Life Simulator</TabsTrigger>
-            <TabsTrigger value="assistant" className="justify-start">AI Chat</TabsTrigger>
-            <TabsTrigger value="advice" className="justify-start">Advice</TabsTrigger>
-            <Button type="button" variant="ghost" onClick={() => setShowReceiptScanner(true)} className="justify-start font-normal">
-              AI Receipt Scan
-            </Button>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-4 sm:space-y-5">
+          {/* Horizontal Row-Wise Navigation Bar for All Features */}
+          <div className="sticky top-14 sm:top-16 z-20 w-full overflow-x-auto no-scrollbar pb-1 pt-1 -mx-1 px-1 sm:mx-0 sm:px-0">
+            <TabsList className="flex h-auto w-max flex-nowrap items-center justify-start gap-1 sm:gap-1.5 rounded-2xl bg-slate-900/90 dark:bg-slate-900/90 p-1.5 border border-slate-800 shadow-xl backdrop-blur-xl">
+              <TabsTrigger value="home" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Home className="h-3.5 w-3.5" /> Home
+              </TabsTrigger>
+              <TabsTrigger value="overview" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <BarChart3 className="h-3.5 w-3.5" /> Overview
+              </TabsTrigger>
+              <TabsTrigger value="transactions" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <CreditCard className="h-3.5 w-3.5" /> Transactions
+              </TabsTrigger>
+              <TabsTrigger value="budget" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <PiggyBank className="h-3.5 w-3.5" /> Budget
+              </TabsTrigger>
+              <TabsTrigger value="detection" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <AlertOctagon className="h-3.5 w-3.5" /> Detection
+              </TabsTrigger>
+              <TabsTrigger value="predictions" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <TrendingUp className="h-3.5 w-3.5" /> Predictions
+              </TabsTrigger>
+              <TabsTrigger value="subscriptions" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Repeat className="h-3.5 w-3.5" /> Subscriptions
+              </TabsTrigger>
+              <TabsTrigger value="reports" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Activity className="h-3.5 w-3.5" /> Reports
+              </TabsTrigger>
+              <TabsTrigger value="affordability" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Target className="h-3.5 w-3.5" /> Affordability
+              </TabsTrigger>
+              <TabsTrigger value="debt-payoff" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Zap className="h-3.5 w-3.5" /> Debt Payoff
+              </TabsTrigger>
+              <TabsTrigger value="tax-planning" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Calculator className="h-3.5 w-3.5" /> Tax Planning
+              </TabsTrigger>
+              <TabsTrigger value="news-market" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Globe className="h-3.5 w-3.5" /> News & Markets
+              </TabsTrigger>
+              <TabsTrigger value="simulator" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Brain className="h-3.5 w-3.5" /> Life Simulator
+              </TabsTrigger>
+              <TabsTrigger value="assistant" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <MessageSquare className="h-3.5 w-3.5" /> AI Chat
+              </TabsTrigger>
+              <TabsTrigger value="advice" className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:text-white hover:bg-slate-800">
+                <Lightbulb className="h-3.5 w-3.5" /> Advice
+              </TabsTrigger>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowReceiptScanner(true)}
+                className="flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-cyan-300 bg-cyan-950/60 hover:bg-cyan-900/80 hover:text-cyan-200 border border-cyan-500/30 shadow-sm transition-all"
+              >
+                <Receipt className="h-3.5 w-3.5 text-cyan-400" />
+                AI Receipt Scan
+                <Badge className="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white text-[10px] px-1.5 py-0 h-4 ml-1">AI</Badge>
+              </Button>
+            </TabsList>
+          </div>
 
-          <div className="min-w-0 flex-1">
+          <div className="w-full">
 
           <TabsContent value="debt-payoff" className="space-y-4">
             <DebtPayoffCalculator />
@@ -1734,6 +1912,115 @@ DATE: 2026-06-15" value={receiptText} onChange={(e) => setReceiptText(e.target.v
           onConfirm={handleReceiptScannerConfirm}
           api={api}
         />
+
+        {/* Mobile 16-Modules Selector Modal */}
+        <Dialog open={moreModulesOpen} onOpenChange={setMoreModulesOpen}>
+          <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md rounded-3xl p-5 shadow-2xl">
+            <DialogHeader className="pb-3 border-b border-slate-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div className="text-left">
+                    <DialogTitle className="text-base font-bold text-white">All FinWise Modules</DialogTitle>
+                    <DialogDescription className="text-xs text-slate-400">Tap any module to open instantly</DialogDescription>
+                  </div>
+                </div>
+              </div>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-2.5 py-3 max-h-[65vh] overflow-y-auto pr-1">
+              {MOBILE_MODULES.map((mod) => {
+                const Icon = mod.icon
+                const isActive = activeTab === mod.tab
+                return (
+                  <button
+                    key={mod.id}
+                    type="button"
+                    onClick={() => {
+                      if (mod.isReceiptScan) {
+                        setShowReceiptScanner(true)
+                      } else {
+                        setActiveTab(mod.tab)
+                      }
+                      setMoreModulesOpen(false)
+                    }}
+                    className={`flex flex-col text-left p-3 rounded-2xl border transition-all duration-150 ${
+                      isActive
+                        ? 'bg-indigo-600/30 border-indigo-500/60 shadow-lg shadow-indigo-500/10'
+                        : 'bg-slate-800/60 border-slate-700/60 hover:bg-slate-800 text-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${
+                        isActive ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-indigo-300'
+                      }`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      {isActive && (
+                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Active</span>
+                      )}
+                    </div>
+                    <div className="mt-2 text-xs font-bold text-white">{mod.label}</div>
+                    <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{mod.desc}</div>
+                  </button>
+                )
+              })}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Mobile Bottom Navigation Bar (Fixed for thumb reach) */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800/80 backdrop-blur-2xl px-3 py-1.5 flex items-center justify-between md:hidden shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
+          <button
+            type="button"
+            onClick={() => setActiveTab('home')}
+            className={`flex flex-1 flex-col items-center justify-center py-1 rounded-xl text-[10px] font-semibold transition-all ${
+              activeTab === 'home' ? 'text-indigo-400 bg-indigo-500/15' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Home className="h-4 w-4 mb-0.5" />
+            <span>Home</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('transactions')}
+            className={`flex flex-1 flex-col items-center justify-center py-1 rounded-xl text-[10px] font-semibold transition-all ${
+              activeTab === 'transactions' ? 'text-indigo-400 bg-indigo-500/15' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <CreditCard className="h-4 w-4 mb-0.5" />
+            <span>Ledger</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('budget')}
+            className={`flex flex-1 flex-col items-center justify-center py-1 rounded-xl text-[10px] font-semibold transition-all ${
+              activeTab === 'budget' ? 'text-indigo-400 bg-indigo-500/15' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <PiggyBank className="h-4 w-4 mb-0.5" />
+            <span>Budget</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('assistant')}
+            className={`flex flex-1 flex-col items-center justify-center py-1 rounded-xl text-[10px] font-semibold transition-all ${
+              activeTab === 'assistant' ? 'text-indigo-400 bg-indigo-500/15' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <MessageSquare className="h-4 w-4 mb-0.5" />
+            <span>AI Chat</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMoreModulesOpen(true)}
+            className="flex flex-1 flex-col items-center justify-center py-1 rounded-xl text-[10px] font-semibold text-slate-400 hover:text-slate-200 transition-all"
+          >
+            <Sparkles className="h-4 w-4 mb-0.5 text-purple-400" />
+            <span>Modules</span>
+          </button>
+        </div>
 
         <footer className="pt-8 pb-6 text-center text-xs text-muted-foreground">
           FinWise · Deterministic financial analysis engine · All data stays in your database.
